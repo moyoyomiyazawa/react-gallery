@@ -49,6 +49,36 @@ function Gallery(props) {
   );
 }
 
+function Form(props) {
+  function handleSubmit(event) {
+    // SPAを実現するために、デフォルトのsubmitの振る舞い（フォーム送信後にリロード）を止める
+    event.preventDefault();
+    const { breed } = event.target.elements;
+    props.onFormSubmit(breed.value);
+  }
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="field has-addons">
+          <div className="control is-expanded">
+            <div className="select is-fullwidth">
+              <select name="breed" defaultValue="shiba">
+                <option value="shiba">Shiba</option>
+                <option value="akita">Akita</option>
+              </select>
+            </div>
+          </div>
+          <div className="control">
+            <button type="submit" className="button is-dark">
+              Reload
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 function Main() {
   // useState の引数は状態の初期値
   // useState の戻り値は 2 要素の配列であり、0 番目の要素は現在の状態の値、1 番目の要素は状態を更新するための関数
@@ -64,8 +94,18 @@ function Main() {
       setUrls(urls);
     });
   }, []);
+  function reloadImages(breed) {
+    fetchImages(breed).then((urls) => {
+      setUrls(urls);
+    });
+  }
   return (
     <main>
+      <section className='section'>
+        <div className='container'>
+          <Form onFormSubmit={reloadImages}/>
+        </div>
+      </section>
       <section className='section'>
         <div className='container'>
           <Gallery urls={urls} />
